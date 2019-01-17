@@ -3,7 +3,6 @@ package events
 import (
 	"log"
 
-	events "github.com/angadsharma1016/omega_dbconfig"
 )
 
 type Query struct {
