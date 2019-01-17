@@ -3,13 +3,12 @@ package events
 import (
 	"log"
 	"sync"
-
 )
 
-func CreateEvent(e events.Event, ce chan error) {
+func CreateEvent(e Event, ce chan error) {
 	c := make(chan error)
 	//go createParticipant(e, "StudentCoordinator", c)
-	result, err := events.Session.Run(`CREATE (n:EVENT {name:$name, clubName:$clubName, toDate:$toDate, 
+	result, err := Session.Run(`CREATE (n:EVENT {name:$name, clubName:$clubName, toDate:$toDate, 
 		fromDate: $fromDate, toTime:$toTime, fromTime:$fromTime, budget:$budget, 
 		description:$description, category:$category, venue:$venue, attendance:$attendance, 
 		expectedParticipants:$expectedParticipants, PROrequest:$PROrequest, 
@@ -47,10 +46,10 @@ func CreateEvent(e events.Event, ce chan error) {
 
 	// CREATE STUDENT COORDINATOR, FACULTY COORDINATOR, SPONSOR AND GUEST NODES
 	var mutex = &sync.Mutex{}
-	go events.CreateParticipant(e, "StudentCoordinator", c, mutex)
-	go events.CreateParticipant(e, "FacultyCoordinator", c, mutex)
-	go events.CreateParticipant(e, "MainSponsor", c, mutex)
-	go events.CreateGuest(e, c, mutex)
+	go CreateParticipant(e, "StudentCoordinator", c, mutex)
+	go CreateParticipant(e, "FacultyCoordinator", c, mutex)
+	go CreateParticipant(e, "MainSponsor", c, mutex)
+	go CreateGuest(e, c, mutex)
 
 	err1, err2, err3, err4 := <-c, <-c, <-c, <-c
 

@@ -2,7 +2,6 @@ package events
 
 import (
 	"log"
-
 )
 
 type Query struct {
@@ -13,12 +12,12 @@ type Query struct {
 }
 
 type EventReturn struct {
-	Event events.Event
+	Event Event
 	Err   error
 }
 
 func ShowEventData(q Query, c chan EventReturn) {
-	result, err := events.Session.Run(`
+	result, err := Session.Run(`
 	MATCH (n:EVENT)-[:StudentCoordinator]->(a)
 	MATCH (n:EVENT)-[:FacultyCoordinator]->(b)
 	MATCH (n:EVENT)-[:GUEST]->(c)
@@ -32,13 +31,13 @@ func ShowEventData(q Query, c chan EventReturn) {
 	})
 
 	if err != nil {
-		c <- EventReturn{events.Event{}, err}
+		c <- EventReturn{Event{}, err}
 		return
 	}
-	var ev events.Event
+	var ev Event
 	for result.Next() {
 		log.Println(result.Record())
-		ev = events.Event{
+		ev = Event{
 			ClubName:              result.Record().GetByIndex(0).(string),
 			Name:                  result.Record().GetByIndex(1).(string),
 			ToDate:                result.Record().GetByIndex(2).(string),
@@ -54,21 +53,21 @@ func ShowEventData(q Query, c chan EventReturn) {
 			PROrequest:            result.Record().GetByIndex(12).(string),
 			CampusEngineerRequest: result.Record().GetByIndex(13).(string),
 			Duration:              result.Record().GetByIndex(14).(string),
-			StudentCoordinator: events.Participant{
+			StudentCoordinator: Participant{
 				result.Record().GetByIndex(15).(string),
 				result.Record().GetByIndex(16).(string),
 				result.Record().GetByIndex(17).(string),
 				result.Record().GetByIndex(18).(string),
 				result.Record().GetByIndex(19).(string),
 			},
-			FacultyCoordinator: events.Participant{
+			FacultyCoordinator: Participant{
 				result.Record().GetByIndex(20).(string),
 				result.Record().GetByIndex(21).(string),
 				result.Record().GetByIndex(22).(string),
 				result.Record().GetByIndex(23).(string),
 				result.Record().GetByIndex(24).(string),
 			},
-			GuestDetails: events.Guest{
+			GuestDetails: Guest{
 				result.Record().GetByIndex(25).(string),
 				result.Record().GetByIndex(26).(string),
 				result.Record().GetByIndex(27).(string),
